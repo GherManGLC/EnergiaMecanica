@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Înălțime Minge</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 2px solid white;
+            border-radius: 10px;
+        }
+
+        .input-group,
+        .result {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid white;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: white;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #ccc;
+        }
+
+        canvas {
+            border: 1px solid white;
+            display: block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Calculator Înălțime Minge</h1>
+
+        <!-- Input Section -->
+        <div class="input-group">
+            <label for="masa">Introduceți Masa Mingii (kg):</label>
+            <input type="number" id="masa">
+        </div>
+
+        <div class="input-group">
+            <label for="viteza">Introduceți Viteza Mingii la Pământ (m/s):</label>
+            <input type="number" id="viteza">
+        </div>
+
+        <button onclick="calculeazaInaltimea()">Calculează Înălțimea</button>
+        <button onclick="playAnimation()" id="playBtn" disabled>Play</button>
+
+        <!-- Result Section -->
+        <div class="result">
+            <h2>Înălțime Calculată:</h2>
+            <p id="inaltimeaCalculata">-</p>
+        </div>
+
+        <!-- Graphic Illustration -->
+        <canvas id="mingeCanvas" width="600" height="400"></canvas>
+    </div>
+
+    <script>
+        let animationFrame;
+        let canvas = document.getElementById('mingeCanvas');
+        let ctx = canvas.getContext('2d');
+        let y = 0; // Starting from the top
+        let step = 10;
+
+        function calculeazaInaltimea() {
+            let masa = parseFloat(document.getElementById('masa').value);
+            let viteza = parseFloat(document.getElementById('viteza').value);
+            let g = 9.8;
+
+            let inaltimea = (Math.pow(viteza, 2)) / (2 * g);
+
+            document.getElementById('inaltimeaCalculata').innerText = inaltimea.toFixed(2) + ' metri';
+            document.getElementById('playBtn').disabled = false;
+
+            deseneazaAnimatiaMingii(inaltimea);
+        }
+
+        function deseneazaAnimatiaMingii(inaltimea) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw ground
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - 10);
+            ctx.lineTo(canvas.width, canvas.height - 10);
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+
+            // Draw ball
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, y, 10, 0, 2 * Math.PI);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+        }
+
+        function playAnimation() {
+            let inaltimea = parseFloat(document.getElementById('inaltimeaCalculata').innerText.split(' ')[0]);
+            let masa = parseFloat(document.getElementById('masa').value);
+            let viteza = parseFloat(document.getElementById('viteza').value);
+
+            if (y >= canvas.height - 10) {
+                y = 0;
+                return;
+            }
+
+            y += 4 + (10 - masa) * 0.5; // Increase speed based on mass
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw ground
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - 10);
+            ctx.lineTo(canvas.width, canvas.height - 10);
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+
+            // Draw ball
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, y, 10, 0, 2 * Math.PI);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+
+            animationFrame = requestAnimationFrame(playAnimation);
+        }
+    </script>
+
+</body>
+
+</html>
